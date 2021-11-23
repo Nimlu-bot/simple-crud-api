@@ -13,36 +13,24 @@ const PERSON_UPDATED_DATA = {
 };
 const host = `localhost:${PORT}`;
 
-describe('1 scenario', () => {
+describe('E2E tests', () => {
   const request = supertest(host);
+  describe('1 scenario ', () => {
+    let personId;
+    let response;
 
-  describe('GET', () => {
-    it('should get all users', async () => {
-      const personResponse = await request
+    it('should check array of persons is empty', async () => {
+      await request
         .get('/person')
         .set('Accept', 'application/json')
         .expect(200)
-        .expect('Content-Type', /json/);
-      // debug(usersResponse.body);
-      expect(personResponse.status).toBe(200);
-      expect(Array.isArray(personResponse.body)).toBeTruthy();
+        .expect('Content-Type', /json/)
+        .then((res) => {
+          expect(Array.isArray(res.body)).toBeTruthy();
+          expect(res.body.length).toBe(0);
+        });
     });
-    // it('should get user by ID', async () => {
-    //   const personResponse = await request
-    //     .get('/person/')
-    //     .set('Accept', 'application/json')
-    //     .expect(200)
-    //     .expect('Content-Type', /json/);
-    //   // debug(usersResponse.body);
-    //   expect(personResponse.status).toBe(200);
-    //   expect(Array.isArray(personResponse.body)).toBeTruthy();
-    // });
-  });
-
-  describe('POST', () => {
-    it('should create user with id', async () => {
-      let personId;
-
+    it('should create person ', async () => {
       await request
         .post('/person')
         .set('Accept', 'application/json')
@@ -50,37 +38,23 @@ describe('1 scenario', () => {
         .expect(201)
         .expect('Content-Type', /json/)
         .then((res) => {
+          response = { ...PERSON_DATA, id: res.body.id };
           expect(res.body.id).toMatch(/[a-z]*/);
+          expect(res.body).toEqual(response);
           personId = res.body.id;
         });
-
-      const personResponse = await request
-        .get('/person')
+    });
+    it('should check created person', async () => {
+      await request
+        .get(`/person/${personId}`)
         .set('Accept', 'application/json')
         .expect(200)
-        .expect('Content-Type', /json/);
-      expect(personResponse.status).toBe(200);
-      expect(personResponse.body).toBeInstanceOf(Object);
-      expect(personResponse.body[0].id).toEqual(personId);
-
-      await request.delete(`/person/${personId}`);
-    });
-  });
-
-  describe('PUT', () => {
-    it('should update user with id', async () => {
-      let personId;
-
-      await request
-        .post('/person')
-        .set('Accept', 'application/json')
-        .send(PERSON_DATA)
-        .expect(201)
         .expect('Content-Type', /json/)
         .then((res) => {
-          expect(res.body.id).toMatch(/[a-z]*/);
-          personId = res.body.id;
+          expect(res.body).toEqual(response);
         });
+    });
+    it('should change person data', async () => {
       await request
         .put(`/person/${personId}`)
         .set('Accept', 'application/json')
@@ -88,20 +62,129 @@ describe('1 scenario', () => {
         .expect(200)
         .expect('Content-Type', /json/)
         .then((res) => {
-          expect(res.body.id).toMatch(/[a-z]*/);
+          expect(res.body.id).toBe(personId);
           expect(res.body.name).toBe('TEST_USER2');
         });
-
-      const personResponse = await request
+    });
+    it('should delete person', async () => {
+      await request.delete(`/person/${personId}`).expect(204);
+    });
+    it('should check that person is deleted', async () => {
+      await request
+        .get(`/person/${personId}`)
+        .set('Accept', 'application/json')
+        .expect(404)
+        .expect('Content-Type', /json/)
+        .then((res) => {
+          expect(res.body.message).toBe(`person with id ${personId} not found`);
+        });
+    });
+  });
+  describe('2 scenario', () => {
+    it('should check array of persons is empty', async () => {
+      await request
         .get('/person')
         .set('Accept', 'application/json')
         .expect(200)
-        .expect('Content-Type', /json/);
-      expect(personResponse.status).toBe(200);
-      expect(personResponse.body).toBeInstanceOf(Object);
-      expect(personResponse.body[0].id).toEqual(personId);
+        .expect('Content-Type', /json/)
+        .then((res) => {
+          expect(Array.isArray(res.body)).toBeTruthy();
+          expect(res.body.length).toBe(0);
+        });
+    });
+    it('should return 400 error if user data does not contain required fields', async () => {
+      const INVALID_PERSON_DATA = { name: 'INVALID_USER' };
+      await request
+        .post('/person')
+        .set('Accept', 'application/json')
+        .send(INVALID_PERSON_DATA)
+        .expect(400)
+        .expect('Content-Type', /json/)
+        .then((res) => {
+          expect(res.body.message).toBe(
+            'data does not contain required fields'
+          );
+        });
+    });
+  });
+  describe('3 scenario', () => {
+    it('should check array of persons is empty', async () => {
+      await request
+        .get('/person')
+        .set('Accept', 'application/json')
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .then((res) => {
+          expect(Array.isArray(res.body)).toBeTruthy();
+          expect(res.body.length).toBe(0);
+        });
+    });
 
-      await request.delete(`/person/${personId}`);
+    it('should return 500 error if user data is string', async () => {
+      const INVALID_PERSON_DATA = 'INVALID_PERSON';
+      await request
+        .post('/person')
+        .set('Accept', 'application/json')
+        .send(INVALID_PERSON_DATA)
+        .expect(500)
+        .expect('Content-Type', /json/)
+        .then((res) => {
+          expect(res.body.message).toBe('Internal server error');
+        });
+    });
+  });
+  describe('4 scenario', () => {
+    let personId;
+    let response;
+    it('should check array of persons is empty', async () => {
+      await request
+        .get('/person')
+        .set('Accept', 'application/json')
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .then((res) => {
+          expect(Array.isArray(res.body)).toBeTruthy();
+          expect(res.body.length).toBe(0);
+        });
+    });
+
+    it('should create 2 persons ', async () => {
+      await request
+        .post('/person')
+        .set('Accept', 'application/json')
+        .send(PERSON_DATA)
+        .expect(201)
+        .expect('Content-Type', /json/)
+        .then((res) => {
+          response = { ...PERSON_DATA, id: res.body.id };
+          expect(res.body.id).toMatch(/[a-z]*/);
+          expect(res.body).toEqual(response);
+        });
+
+      await request
+        .post('/person')
+        .set('Accept', 'application/json')
+        .send(PERSON_DATA)
+        .expect(201)
+        .expect('Content-Type', /json/)
+        .then((res) => {
+          response = { ...PERSON_DATA, id: res.body.id };
+          expect(res.body.id).toMatch(/[a-z]*/);
+          expect(res.body).toEqual(response);
+        });
+    });
+
+    it('should check array of persons length is 2 and IDs are different', async () => {
+      await request
+        .get('/person')
+        .set('Accept', 'application/json')
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .then((res) => {
+          expect(Array.isArray(res.body)).toBeTruthy();
+          expect(res.body.length).toBe(2);
+          expect(res.body[0].id).not.toBe(res.body[1].id);
+        });
     });
   });
 });
