@@ -134,7 +134,6 @@ describe('E2E tests', () => {
     });
   });
   describe('4 scenario', () => {
-    let personId;
     let response;
     it('should check array of persons is empty', async () => {
       await request

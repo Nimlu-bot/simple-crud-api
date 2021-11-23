@@ -23,8 +23,8 @@ const app = http.createServer(async (req, res) => {
         res.end();
       } else if (req.method === 'POST') {
         const data = await getReqData(req);
-        validate(JSON.parse(data));
-        const person = addPerson(JSON.parse(data));
+        validate(data);
+        const person = addPerson(data);
         res.writeHead(201, { 'Content-Type': 'application/json' });
         res.write(JSON.stringify(person));
         res.end();
@@ -36,7 +36,7 @@ const app = http.createServer(async (req, res) => {
       res.end();
     } else if (req.method === 'PUT') {
       const data = await getReqData(req);
-      const person = changePerson(JSON.parse(data), id);
+      const person = changePerson(data, id);
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.write(JSON.stringify(person));
       res.end();
@@ -50,6 +50,7 @@ const app = http.createServer(async (req, res) => {
       throw new NotFoundError('Route not found');
     }
   } catch (error) {
+	
     errorHandler(error, req, res);
   }
 });
