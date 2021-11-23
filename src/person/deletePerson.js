@@ -7,7 +7,7 @@ const deletePerson = (id) => {
   if (!person) throw new NotFoundError(`person with id ${id} not found`);
   const newDb = db.filter((el) => el.id !== id);
   const isUpdated = updateDB(newDb);
-  if (isUpdated) return person;
+  if (isUpdated) return true;
   throw new Error('somthing wrong in updateDB');
 };
 

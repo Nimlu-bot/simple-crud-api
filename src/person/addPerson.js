@@ -8,4 +8,4 @@ const addPerson = (data) => {
   return newPerson;
 };
 
-module.exports = addPerson;
+module.exports = { addPerson };

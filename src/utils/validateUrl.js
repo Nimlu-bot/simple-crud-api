@@ -8,4 +8,4 @@ const validateUrl = (url) => {
   if (!!id && !uuid.validate(id)) throw new InvalidError('id incorrect');
   return id;
 };
-module.exports = validateUrl;
+module.exports = { validateUrl };
