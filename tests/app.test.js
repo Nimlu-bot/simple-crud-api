@@ -135,6 +135,8 @@ describe('E2E tests', () => {
   });
   describe('4 scenario', () => {
     let response;
+    let id1;
+    let id2;
     it('should check array of persons is empty', async () => {
       await request
         .get('/person')
@@ -180,10 +182,18 @@ describe('E2E tests', () => {
         .expect(200)
         .expect('Content-Type', /json/)
         .then((res) => {
+          id1 = res.body[0].id;
+          id2 = res.body[1].id;
           expect(Array.isArray(res.body)).toBeTruthy();
           expect(res.body.length).toBe(2);
-          expect(res.body[0].id).not.toBe(res.body[1].id);
+          expect(id1).not.toBe(id2);
         });
+    });
+    it('should delete person1', async () => {
+      await request.delete(`/person/${id1}`).expect(204);
+    });
+    it('should delete person2', async () => {
+      await request.delete(`/person/${id2}`).expect(204);
     });
   });
 });

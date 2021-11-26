@@ -7,7 +7,7 @@
     "start:dev": " nodemon ./src/index.js",
     "build": "webpack --mode=production --node-env=production",
     "start:prod": "npm  run build && node ./dist/main.js",
-    "test": "jest --verbose --watch"
+    "test": "jest --verbose"
   },
   "repository": {
     "type": "git",

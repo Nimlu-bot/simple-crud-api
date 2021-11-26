@@ -1,15 +1,25 @@
-# 🚀 Welcome to your new awesome project!
+# 🚀 Welcome to simple crud api
 
-This project has been created using **webpack-cli**, you can now run
+1. clone repo or download surce code and unpack
 
-```
-npm run build
-```
+2. go to the folder where package.json located and run ``` npm i```
 
-or
+3. to run development server ``` npm run start:dev```
 
-```
-yarn build
-```
+4. to build production app run ``` npm run start:prod``` bundle located in dist folder
 
-to bundle your application
+5. to run tests ``` npm run test``` this. coomand run 4 e2e test scenarious. Before start testing you  **MUST**  start dev server ``` npm run start:dev```
+
+Server is runing on 8000 port 
+
+For check use ```localhost:8000/person/```
+
+Test json may be 
+{"name":"name12",
+  "age":42,
+    "hobbies":["hobbi1","hobbi2"]
+}
+
+
+Tests are testing all types of responces include 500 status
+
