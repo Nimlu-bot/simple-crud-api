@@ -36,6 +36,7 @@ const app = http.createServer(async (req, res) => {
       res.end();
     } else if (req.method === 'PUT') {
       const data = await getReqData(req);
+      validate(data);
       const person = changePerson(data, id);
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.write(JSON.stringify(person));
@@ -50,7 +51,6 @@ const app = http.createServer(async (req, res) => {
       throw new NotFoundError('Route not found');
     }
   } catch (error) {
-	
     errorHandler(error, req, res);
   }
 });
