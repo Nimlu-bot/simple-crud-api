@@ -10,7 +10,7 @@
 
 5. to run tests ``` npm run test``` this. coomand run 4 e2e test scenarious. Before start testing you  **MUST**  start dev server ``` npm run start:dev```
 
-Server is runing on 8000 port and assepter such methods as GET,POST,PUT,DELETE.
+Server is runing on 8000 port and assepter such methods as GET,POST,PUT,DELETE and data format json.
 
 To get all persons use ```GET localhost:8000/person```
 
